@@ -1,7 +1,7 @@
 # team-profile-generator
 
 ## Description
-A README wizard that allows for someone to answer a few simple questions and creates a professional grade README.md file for future use.
+A Team Generator wizard that allows for someone to answer a few simple questions and creates a professional grade webpage for one's team. Including the ability to click on links in order to send emails and view an employee's github if applicable
 
 ## Table of Contents
 * [Installation](#Installation)

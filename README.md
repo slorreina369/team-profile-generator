@@ -18,6 +18,8 @@ Install Jest for testng purposes
 Run 'node index' in the command line
 
 ## Visuals
+https://slorreina369.github.io/team-profile-generator/
+
 # Images
 ![Screenshot](./assets/media/CompletedPage.png)
 

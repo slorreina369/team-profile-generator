@@ -1,8 +1,10 @@
 const inquirer = require('inquirer');
+const fs = require('fs');
 const Employee = require('./lib/Employee');
 const Engineer = require('./lib/Engineer');
 const Intern = require('./lib/Intern');
 const Manager = require('./lib/Manager');
+const generateHTML = require('./lib/generateHTML');
 
 class Team {
     constructor(){
@@ -10,11 +12,24 @@ class Team {
     }
     promptTeam(){
         let manager = new Manager();
+        this.employees.push(manager);
 
         return manager.employeePrompt()
         .then(() => {
             console.log("Thank you, next!")
             return this.employeePrompt();
+        })
+        .then(() => {
+            return inquirer
+            .prompt({
+                type:"text",
+                name:"file_name",
+                message:"What's your file name?"
+                // make it funny
+            })
+        })
+        .then(({file_name}) => {
+            writeToFile(file_name, this.employees);
         });
     }
 
@@ -54,6 +69,22 @@ class Team {
             });
         });
     }
+};
+
+function writeToFile(fileName, data) {
+    console.log(fileName);
+    return new Promise((resolve, reject) => {
+        fs.writeFile(fileName, generateHTML(data), err =>{
+            if(err){
+                reject(err);
+                return;
+            }
+            resolve({
+                ok:true,
+                message:'Team Page Created!'
+            });
+        })
+    })
 }
 
 new Team().promptTeam();

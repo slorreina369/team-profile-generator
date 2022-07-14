@@ -5,47 +5,55 @@ const Intern = require('./lib/Intern');
 const Manager = require('./lib/Manager');
 
 class Team {
-
-    QuestionPrompt(){
-        inquirer
-        .prompt({
-            type:'text',
-            name: 'name',
-            message: 'What is their name?'
-        },
-        {
-            type:'text',
-            name:'email',
-            message:'What is their email?'
-        },
-        {
-            type:'text',
-            name:'employeeID',
-            message:'what is their employee ID number?'
-        })
-    };
-
+    constructor(){
+        this.employees = []
+    }
     promptTeam(){
-        let Manager = this.QuestionPrompt();
-        let continueTeam = true;
-        let teamManagement = [];
+        let manager = new Manager();
 
-        while(continueTeam){
-            this.QuestionPrompt().then(employeeData =>{
-                if(employeeData.title === 'Engineer'){
-                    return new Employee(employeeData);
-                } else {
-                    return new Intern(employeeData);
+        return manager.employeePrompt()
+        .then(() => {
+            console.log("Thank you, next!")
+            return this.employeePrompt();
+        });
+    }
+
+    employeePrompt(){
+        return inquirer
+        .prompt({
+            type:'list',
+            name:'title',
+            message: 'Are you submitting an Engineer or an Intern?',
+            choices:['Engineer', 'Intern']
+            // unpaid interns are highly unethical. Do better imaginary company
+        })
+        .then(employeeData =>{
+            if(employeeData.title === 'Engineer'){
+                return new Engineer();
+            } else {
+                return new Intern();
+            };
+        })
+        .then(employee =>{
+            return employee
+            .employeePrompt()
+            .then(() => employee)
+        })
+        .then(employee =>{
+            return inquirer
+            .prompt({
+                type:"confirm",
+                name:"MOAR",
+                message: "Do you have more employees to add?"
+            })
+            .then(({MOAR}) => {
+                this.employees.push(employee);
+                if(MOAR){
+                    return this.employeePrompt()
                 };
-            })
-            .then(employee =>{
-                teamManagement.push(employee);
-                return inquirer.prompt({
-                    type:"confirm",
-                    name:"MOAR",
-                    message: "Do you have more employees to add?"
-                });
-            })
-        }
+            });
+        });
     }
 }
+
+new Team().promptTeam();
